@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <string>
+#include <QLabel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -16,18 +18,25 @@ public:
     void onAwake();
     void onAsleep();
     void onIdle();
+    void onStateChange();
     void titleBarActions();
+    void stringBuilder(quint32, std::string, QLabel*);
     ~MainWindow();
 
 public slots:
     void onTick();
+    void onOpenInfo();
     void onOpenUrl();
     void onQuit();
+    void sfnOnSwitch();
 
 private:
     Ui::MainWindow *ui;
     QPoint mouseLastPos;
     QTimer *mouseTimer;
     quint32 mouseIdleSeconds;
+    quint32 lastIdleSec;
+    bool isForcedAwake;
+    bool isNormal;
 };
 #endif // MAINWINDOW_H

@@ -69,5 +69,6 @@ Thumbs.db
 # Binaries
 # --------
 *.dll
-*.exe
+build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release
+build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Debug
 
