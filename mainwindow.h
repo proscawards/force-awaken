@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <string>
 #include <QLabel>
+#include <QDateTime>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,10 +22,12 @@ public:
     void onStateChange();
     void titleBarActions();
     void stringBuilder(quint32, std::string, QLabel*);
+    QString preprocessTimer(quint32);
     ~MainWindow();
 
 public slots:
     void onTick();
+    void onElapsed();
     void onOpenInfo();
     void onOpenUrl();
     void onQuit();
@@ -36,6 +39,8 @@ private:
     QTimer *mouseTimer;
     quint32 mouseIdleSeconds;
     quint32 lastIdleSec;
+    quint32 initSec;
+    QTimer *elapsedTimer;
     bool isForcedAwake;
     bool isNormal;
 };

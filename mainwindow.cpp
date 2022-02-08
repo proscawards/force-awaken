@@ -7,6 +7,7 @@
 #include <QDateTime>
 #include <string>
 #include <QMessageBox>
+#include <QShortcut>
 
 using namespace std;
 
@@ -21,9 +22,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->copyrightLbl->setText("©Copyright 2022 proscawards. Made with ☕ and ❤️.");
 
     //Bind awake button to onAwake method
+    ui->awakeBtn->setShortcut(Qt::CTRL|Qt::Key_F);
     connect(ui->awakeBtn, &QPushButton::released, this, &MainWindow::onAwake);
 
     //Bind reset button to onAsleep method
+    ui->resetBtn->setShortcut(Qt::CTRL|Qt::Key_R);
     connect(ui->resetBtn, &QPushButton::released, this, &MainWindow::onAsleep);
 
     //Disable reset button onInit
@@ -35,14 +38,20 @@ MainWindow::MainWindow(QWidget *parent)
     mouseLastPos = QCursor::pos();
     mouseIdleSeconds = 0;
     lastIdleSec = 0;
+    initSec = 0;
     isForcedAwake = false;
     isNormal = true;
-    QDateTime dt = dt.currentDateTime();
-    ui->activeSinceLbl->setText("Active since "+dt.toString("yyyy-MM-dd HH:mm:ss"));
+    elapsedTimer = new QTimer();
+    QDateTime dt = QDateTime::currentDateTime();
+    ui->activeSinceLbl->setText(dt.toString("yyyy-MM-dd HH:mm:ss"));
 
     //Connect and Start
     connect(mouseTimer, SIGNAL(timeout()), this, SLOT(onTick()));
     mouseTimer->start(1000);
+
+    //Connect and Start
+    connect(elapsedTimer, SIGNAL(timeout()), this, SLOT(onElapsed()));
+    elapsedTimer->start(1000);
 
     titleBarActions();
     sfnOnSwitch();
@@ -85,15 +94,21 @@ void MainWindow::onTick()
     else{
         mouseIdleSeconds++;
     }
-
+    ui->idleTimeLbl->setText(preprocessTimer(mouseIdleSeconds));
     mouseLastPos = point;
     onIdle();
     onStateChange();
 }
 
+void MainWindow::onElapsed()
+{
+    initSec++;
+    ui->elapsedTimeLbl->setText(preprocessTimer(initSec));
+}
+
 void MainWindow::onIdle(){
     stringBuilder(mouseIdleSeconds, "Idle for", ui->windowStateLbl);
-    stringBuilder(lastIdleSec, "Last idle:", ui->lastIdleLbl);
+    stringBuilder(lastIdleSec, "", ui->lastIdleLbl);
 }
 
 void MainWindow::stringBuilder(quint32 sec, std::string display, QLabel *label){
@@ -113,9 +128,12 @@ void MainWindow::stringBuilder(quint32 sec, std::string display, QLabel *label){
 }
 
 void MainWindow::titleBarActions(){
+    ui->actionHow_to_use->setShortcut(Qt::CTRL|Qt::Key_H);
     connect(ui->actionHow_to_use, SIGNAL(triggered()), this, SLOT(onOpenInfo()));
+    ui->actionSource_Codes->setShortcut(Qt::CTRL|Qt::Key_G);
     connect(ui->actionSource_Codes, SIGNAL(triggered()), this, SLOT(onOpenUrl()));
     connect(ui->menuExit, SIGNAL(aboutToShow()), this, SLOT(onQuit()));
+    ui->actionStats_for_Nerd->setShortcut(Qt::Key_F1);
     connect(ui->actionStats_for_Nerd, SIGNAL(triggered()), this, SLOT(sfnOnSwitch()));
 }
 
@@ -124,7 +142,7 @@ void MainWindow::onOpenInfo(){
     msgBox.setWindowTitle("How to use Force Awaken");
     msgBox.setWindowIcon(QIcon(":assets/logo.png"));
     msgBox.setText("Available action(s)");
-    msgBox.setInformativeText("1. Force Awake: Prevent system from going into sleep/lock mode.\n2. Reset: Revert system to default settings.\n3. Stats for Nerd: Show/hide useless informations.");
+    msgBox.setInformativeText("1. Force Awake (Ctrl+F): Prevent system from going into sleep/lock mode.\n2. Reset (Ctrl+R): Revert system to default settings.\n3. Stats for Nerd (F1): Show/hide useless informations.");
     msgBox.exec();
 }
 
@@ -140,13 +158,25 @@ void MainWindow::onQuit(){
 
 void MainWindow::sfnOnSwitch(){
     if (ui->actionStats_for_Nerd->isChecked()){
-        ui->activeSinceLbl->setVisible(true);
-        ui->lastIdleLbl->setVisible(true);
+        ui->sfnWidget->show();
     }
     else{
-        ui->activeSinceLbl->setVisible(false);
-        ui->lastIdleLbl->setVisible(false);
+        ui->sfnWidget->hide();
     }
+}
+
+QString MainWindow::preprocessTimer(quint32 duration)
+{
+  QString res;
+  int seconds = (int) (duration % 60);
+  duration /= 60;
+  int minutes = (int) (duration % 60);
+  duration /= 60;
+  int hours = (int) (duration % 24);
+  int days = (int) (duration / 24);
+  if (days == 0)
+      return res.asprintf("%02d:%02d:%02d", hours, minutes, seconds);
+  return res.asprintf("%dd%02d:%02d:%02d", days, hours, minutes, seconds);
 }
 
 MainWindow::~MainWindow()
