@@ -23,5 +23,5 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 RESOURCES += resources/resources.qrc
-TARGET = Force Awaken
+TARGET = Force_Awaken
 RC_ICONS += resources/assets/logo.ico

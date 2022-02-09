@@ -5,6 +5,8 @@
 #include <string>
 #include <QLabel>
 #include <QDateTime>
+#include <QSystemTrayIcon>
+#include <QCloseEvent>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -16,22 +18,30 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    void onAwake();
-    void onAsleep();
     void onIdle();
+    void onQuit();
     void onStateChange();
     void titleBarActions();
     void stringBuilder(quint32, std::string, QLabel*);
     QString preprocessTimer(quint32);
     ~MainWindow();
 
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
 public slots:
+    void onAwake();
+    void onAsleep();
     void onTick();
     void onElapsed();
     void onOpenInfo();
     void onOpenUrl();
-    void onQuit();
+    void onQuitPrompt();
     void sfnOnSwitch();
+    void trayOnTrigger(QSystemTrayIcon::ActivationReason);
+    void createActions();
+    void onMinimizeToSysTray();
+    void onMsgClick();
 
 private:
     Ui::MainWindow *ui;
@@ -43,5 +53,14 @@ private:
     QTimer *elapsedTimer;
     bool isForcedAwake;
     bool isNormal;
+    bool isEscape;
+    QSystemTrayIcon *tray;
+    QAction *faAct;
+    QAction *reAct;
+    QAction *exAct;
+    QAction *sfnAct;
+    QAction *scAct;
+    QAction *htuAct;
+    QCloseEvent *event;
 };
 #endif // MAINWINDOW_H
