@@ -9,6 +9,12 @@
 #include <QMessageBox>
 #include <QShortcut>
 #include <QCloseEvent>
+#include <QNetworkRequest>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QJsonDocument>
+#include <QtDebug>
+#include <QSettings>
 
 #ifndef QT_NO_EMIT
 # define emit
@@ -20,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    s = new Storage();
     ui->setupUi(this);
     this->setFixedSize(QSize(300,300));
     this->setWindowTitle("Force Awaken");
@@ -47,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
     isForcedAwake = false;
     isNormal = true;
     isEscape = false;
+    latestVer = ui->versionLabel->text();
     elapsedTimer = new QTimer();
     QDateTime dt = QDateTime::currentDateTime();
     ui->activeSinceLbl->setText(dt.toString("yyyy-MM-dd HH:mm:ss"));
@@ -66,9 +74,11 @@ MainWindow::MainWindow(QWidget *parent)
     menu->addAction(faAct);
     menu->addAction(reAct);
     menu->addSeparator();
-    menu->addAction(sfnAct);
-    menu->addAction(scAct);
     menu->addAction(htuAct);
+    menu->addAction(sfnAct);
+    menu->addSeparator();
+    menu->addAction(scAct);
+    menu->addAction(cfuAct);
     menu->addSeparator();
     menu->addAction(exAct);
 
@@ -79,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent)
     tray->activated(QSystemTrayIcon::DoubleClick);
     connect(tray,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(trayOnTrigger(QSystemTrayIcon::ActivationReason)));
 
+    updateUi();
     titleBarActions();
     sfnOnSwitch();
 }
@@ -87,34 +98,46 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::createActions(){
     //Force Awaken
     faAct = new QAction(tr("&Force Awake"), this);
-    faAct->setShortcut(Qt::CTRL|Qt::Key_F);
+    faAct->setShortcut(Qt::Key_F);
     faAct->setStatusTip(tr("Prevent system from going into sleep/lock mode."));
+    faAct->setIcon(QIcon(":assets/awake.svg"));
     connect(faAct, &QAction::triggered, this, &MainWindow::onAwake);
     //Reset
     reAct = new QAction(tr("&Reset"), this);
-    reAct->setShortcut(Qt::CTRL|Qt::Key_R);
+    reAct->setShortcut(Qt::Key_R);
     reAct->setStatusTip(tr("Revert system into default settings."));
+    reAct->setIcon(QIcon(":assets/asleep.svg"));
     connect(reAct, &QAction::triggered, this, &MainWindow::onAsleep);
     //Exit
     exAct = new QAction(tr("&Exit"), this);
     exAct->setShortcut(Qt::Key_Escape);
     exAct->setStatusTip(tr("Exit application."));
+    exAct->setIcon(QIcon(":assets/close.svg"));
     connect(exAct, &QAction::triggered, this, &MainWindow::onQuitPrompt);
     //Stats for nerd
     sfnAct = new QAction(tr("&Stats for Nerd"), this);
     sfnAct->setShortcut(Qt::Key_F1);
     sfnAct->setStatusTip(tr("Show/hide useless information."));
+    sfnAct->setIcon(QIcon(":assets/stat.svg"));
     connect(sfnAct, &QAction::triggered, this, &MainWindow::sfnOnSwitch);
     //Source codes
     scAct = new QAction(tr("&Source Codes"), this);
     scAct->setShortcut(Qt::CTRL|Qt::Key_G);
     scAct->setStatusTip(tr("Redirect to GitHub source codes."));
+    scAct->setIcon(QIcon(":assets/source.svg"));
     connect(scAct, &QAction::triggered, this, &MainWindow::onOpenUrl);
     //How to use
     htuAct = new QAction(tr("&How to Use"), this);
     htuAct->setShortcut(Qt::CTRL|Qt::Key_H);
     htuAct->setStatusTip(tr("Simple guide on using the application."));
+    htuAct->setIcon(QIcon(":assets/info.svg"));
     connect(htuAct, &QAction::triggered, this, &MainWindow::onOpenInfo);
+    //Check for Update
+    cfuAct = new QAction(tr("&Check for Update"), this);
+    cfuAct->setShortcut(Qt::CTRL|Qt::Key_U);
+    cfuAct->setStatusTip(tr("Check for update."));
+    cfuAct->setIcon(QIcon(":assets/update.svg"));
+    connect(cfuAct, &QAction::triggered, this, &MainWindow::onCheckUpdate);
 }
 
 //Triggered when Force Awake is being clicked
@@ -124,6 +147,8 @@ void MainWindow::onAwake(){
     ui->currentStatusLbl->setText("System is now in FORCE AWAKE state :D!");
     ui->awakeBtn->setEnabled(false);
     ui->resetBtn->setEnabled(true);
+    ui->actionForce_Awake->setChecked(true);
+    ui->actionReset->setChecked(false);
 }
 
 //Triggered when Reset is being clicked
@@ -133,6 +158,45 @@ void MainWindow::onAsleep(){
     ui->currentStatusLbl->setText("System is now in DEFAULT state :D!");
     ui->awakeBtn->setEnabled(true);
     ui->resetBtn->setEnabled(false);
+    ui->actionForce_Awake->setChecked(false);
+    ui->actionReset->setChecked(true);
+}
+
+//Check update from Github release
+void MainWindow::onCheckUpdate(){
+    QString version = ui->versionLabel->text();
+    QUrl url("https://api.github.com/repos/proscawards/force-awaken/tags");
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QNetworkAccessManager nam;
+    QNetworkReply *reply = nam.get(request);
+
+    bool timeout = false;
+
+    while(!timeout){
+        qApp->processEvents();
+        if(reply->isFinished()) break;
+    }
+
+    if(reply->isFinished()){
+        QByteArray response_data = reply->readAll();
+        QJsonDocument json = QJsonDocument::fromJson(response_data);
+        latestVer = json[0]["name"].toString().replace("v", "");
+    }
+
+    if (QString::compare(version, latestVer) == 0){
+        tray->showMessage("Force Awaken","Your version is up to date :D!",QIcon(":assets/logo.png"), 3000);
+    }
+    else{
+        tray->showMessage("Force Awaken","Your version is outdated! Click here to redirect to download page now!\nLatest Version: "+latestVer+"\nInstalled Version: "+version,QIcon(":assets/logo.png"), 3000);
+        connect(tray, SIGNAL(messageClicked()), this, SLOT(onRedirectUpdate()));
+    }
+}
+
+//Redirect user to the release page of GitHub
+void MainWindow::onRedirectUpdate(){
+    QString link = "https://github.com/proscawards/force-awaken/releases/tag/v"+latestVer;
+    QDesktopServices::openUrl(QUrl(link));
 }
 
 //Show/Hide system tray (notification) on clicked
@@ -165,9 +229,11 @@ void MainWindow::onTick()
     if(point != mouseLastPos){
         if (mouseIdleSeconds != 0){lastIdleSec = mouseIdleSeconds;}
         mouseIdleSeconds = 0;
+        if (ui->actionfaIdle->isChecked()){onAsleep();}
     }
     else{
         mouseIdleSeconds++;
+        if (ui->actionfaIdle->isChecked()){onAwake();}
     }
     ui->idleTimeLbl->setText(preprocessTimer(mouseIdleSeconds));
     mouseLastPos = point;
@@ -207,9 +273,9 @@ void MainWindow::stringBuilder(quint32 sec, std::string display, QLabel *label){
 
 //Setting up actions for menu
 void MainWindow::titleBarActions(){
-    ui->actionForce_Awake->setShortcut(Qt::CTRL|Qt::Key_F);
+    ui->actionForce_Awake->setShortcut(Qt::Key_F);
     connect(ui->actionForce_Awake, SIGNAL(triggered()), this, SLOT(onAwake()));
-    ui->actionReset->setShortcut(Qt::CTRL|Qt::Key_R);
+    ui->actionReset->setShortcut(Qt::Key_R);
     connect(ui->actionReset, SIGNAL(triggered()), this, SLOT(onAsleep()));
     ui->actionHow_to_use->setShortcut(Qt::CTRL|Qt::Key_H);
     connect(ui->actionHow_to_use, SIGNAL(triggered()), this, SLOT(onOpenInfo()));
@@ -221,6 +287,25 @@ void MainWindow::titleBarActions(){
     connect(ui->actionExit_to_system_tray, SIGNAL(triggered()), this, SLOT(onMinimizeToSysTray()));
     ui->actionExit_Application->setShortcut(Qt::Key_Escape);
     connect(ui->actionExit_Application, SIGNAL(triggered()), this, SLOT(onQuitPrompt()));
+    ui->actionfaIdle->setShortcut(Qt::Key_F2);
+    connect(ui->actionfaIdle, SIGNAL(triggered()), this, SLOT(onFaIdleOnly()));
+    ui->actionFaOnInit->setShortcut(Qt::Key_F3);
+    connect(ui->actionFaOnInit, SIGNAL(triggered()), this, SLOT(onFaInit()));
+    ui->actionCheck_for_Update->setShortcut(Qt::CTRL|Qt::Key_U);
+    connect(ui->actionCheck_for_Update, SIGNAL(triggered()), this, SLOT(onCheckUpdate()));
+}
+
+//Enable/disable where force awake will be trigger automatically ONLY when idling
+void MainWindow::onFaIdleOnly(){
+    s->setIsIdleOnFaOnly(ui->actionfaIdle->isChecked());
+    updateUi();
+}
+
+//Enable Force Awake on startup
+void MainWindow::onFaInit(){
+    s->setFaOnInit(ui->actionFaOnInit->isChecked());
+    onAutoboot();
+    updateUi();
 }
 
 //Triggered when Alt+F4 is pressed
@@ -275,6 +360,17 @@ void MainWindow::onMsgClick(){
     show();
 }
 
+//Add app to local system path for auto boot
+void MainWindow::onAutoboot(){
+    QSettings bootUpSettings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
+    QString app_path = QCoreApplication::applicationFilePath();
+    if (s->getFaOnInit()) {
+        bootUpSettings.setValue("ForceAwaken", app_path);
+    } else {
+        bootUpSettings.remove("ForceAwaken");
+    }
+}
+
 //Preprocess seconds to dd:HH:mm:ss format
 QString MainWindow::preprocessTimer(quint32 duration)
 {
@@ -301,6 +397,16 @@ void MainWindow::closeEvent(QCloseEvent *event)
         hide();
         event->ignore();
     }
+}
+
+//Update UI on data changed
+void MainWindow::updateUi(){
+    //Set checkbox/radio values
+    ui->actionForce_Awake->setChecked(isForcedAwake);
+    ui->actionReset->setChecked(isNormal);
+    ui->actionfaIdle->setChecked(s->getIsIdleOnFaOnly());
+    ui->actionFaOnInit->setChecked(s->getFaOnInit());
+    if (s->getFaOnInit()){onAwake();}
 }
 
 MainWindow::~MainWindow()

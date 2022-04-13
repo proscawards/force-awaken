@@ -2,5 +2,15 @@
 <RCC version="1.0">
   <qresource>
     <file>assets/logo.png</file>
+    <file>assets/update.svg</file>
+    <file>assets/minimize.svg</file>
+    <file>assets/close.svg</file>
+    <file>assets/info.svg</file>
+    <file>assets/source.svg</file>
+    <file>assets/stat.svg</file>
+	<file>assets/awake.svg</file>
+	<file>assets/asleep.svg</file>
+	<file>assets/rocket.svg</file>
+	<file>assets/onidle.svg</file>
   </qresource>
 </RCC>

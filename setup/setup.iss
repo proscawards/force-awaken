@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Force Awaken"
-#define MyAppVersion "1.0.3"
+#define MyAppVersion "1.0.4"
 #define MyAppPublisher "proscawards"
 #define MyAppURL "https://github.com/proscawards/force-awaken"
 #define MyAppExeName "Force_Awaken.exe"
@@ -41,6 +41,7 @@ Source: "D:\GitHub\force-awaken\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit
 Source: "D:\GitHub\force-awaken\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\imageformats\*"; DestDir: "{app}\plugins/imageformats"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\GitHub\force-awaken\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\platforms\*"; DestDir: "{app}\plugins/platforms"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\GitHub\force-awaken\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\styles\*"; DestDir: "{app}\plugins/styles"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "D:\GitHub\force-awaken\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\tls\*"; DestDir: "{app}\plugins/tls"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\GitHub\force-awaken\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\translations\*"; DestDir: "{app}\plugins/translations"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\D3Dcompiler_47.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -49,6 +50,7 @@ Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\lib
 Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\Force_Awaken_resource_res.o"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\main.o"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\storage.o"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\mainwindow.o"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\moc_mainwindow.cpp"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\moc_mainwindow.o"; DestDir: "{app}"; Flags: ignoreversion

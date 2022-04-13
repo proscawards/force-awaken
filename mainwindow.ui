@@ -50,9 +50,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>169</y>
+      <y>149</y>
       <width>281</width>
-      <height>91</height>
+      <height>111</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="sfnLayout">
@@ -265,14 +265,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_7">
+        <widget class="QLabel" name="versionLabel">
          <property name="font">
           <font>
            <bold>true</bold>
           </font>
          </property>
          <property name="text">
-          <string>1.0.3</string>
+          <string>1.0.4</string>
          </property>
         </widget>
        </item>
@@ -379,17 +379,28 @@
     </property>
     <addaction name="actionForce_Awake"/>
     <addaction name="actionReset"/>
+    <addaction name="separator"/>
     <addaction name="actionStats_for_Nerd"/>
     <addaction name="separator"/>
     <addaction name="actionHow_to_use"/>
     <addaction name="actionSource_Codes"/>
+    <addaction name="actionCheck_for_Update"/>
     <addaction name="separator"/>
     <addaction name="actionExit_to_system_tray"/>
     <addaction name="actionExit_Application"/>
     <addaction name="separator"/>
     <addaction name="action_Copyright_2022_proscawards_All_rights_reserved_Made_with_and"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionfaIdle"/>
+    <addaction name="separator"/>
+    <addaction name="actionFaOnInit"/>
+   </widget>
    <addaction name="menuExit"/>
+   <addaction name="menuSettings"/>
   </widget>
   <action name="action_Copyright_2022_proscawards_All_rights_reserved_Made_with_and">
    <property name="enabled">
@@ -400,6 +411,10 @@
    </property>
   </action>
   <action name="actionSource_Codes">
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/assets/source.svg</normaloff>:/assets/source.svg</iconset>
+   </property>
    <property name="text">
     <string>Source Codes</string>
    </property>
@@ -407,6 +422,10 @@
   <action name="actionStats_for_Nerd">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/assets/stat.svg</normaloff>:/assets/stat.svg</iconset>
    </property>
    <property name="text">
     <string>Stats for Nerd</string>
@@ -416,31 +435,97 @@
    </property>
   </action>
   <action name="actionHow_to_use">
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/assets/info.svg</normaloff>:/assets/info.svg</iconset>
+   </property>
    <property name="text">
-    <string>How to use</string>
+    <string>How to Use</string>
    </property>
   </action>
   <action name="actionExit_Application">
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/assets/close.svg</normaloff>:/assets/close.svg</iconset>
+   </property>
    <property name="text">
     <string>Exit Application</string>
    </property>
   </action>
   <action name="actionExit_to_system_tray">
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/assets/minimize.svg</normaloff>:/assets/minimize.svg</iconset>
+   </property>
    <property name="text">
     <string>Minimize into system tray</string>
    </property>
   </action>
-  <action name="actionForce_Awake">
+  <action name="actionfaIdle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/assets/onidle.svg</normaloff>:/assets/onidle.svg</iconset>
+   </property>
    <property name="text">
-    <string>Force Awake</string>
+    <string>Force Awake ONLY when idling</string>
    </property>
   </action>
-  <action name="actionReset">
+  <action name="actionFaOnInit">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="icon">
+     <iconset resource="resources/resources.qrc">
+      <normaloff>:/assets/rocket.svg</normaloff>:/assets/rocket.svg</iconset>
+    </property>
+    <property name="text">
+     <string>Force Awake on Startup</string>
+    </property>
+    <property name="toolTip">
+     <string>Force Awake on Startup</string>
+    </property>
+   </action>
+  <action name="actionCheck_for_Update">
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/assets/update.svg</normaloff>:/assets/update.svg</iconset>
+   </property>
    <property name="text">
-    <string>Reset</string>
+    <string>Check for Update</string>
    </property>
   </action>
+  <actiongroup name="menuMainFunc">
+   <action name="actionForce_Awake">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="icon">
+     <iconset resource="resources/resources.qrc">
+      <normaloff>:/assets/awake.svg</normaloff>:/assets/awake.svg</iconset>
+    </property>
+    <property name="text">
+     <string>Force Awake</string>
+    </property>
+   </action>
+   <action name="actionReset">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="icon">
+     <iconset resource="resources/resources.qrc">
+      <normaloff>:/assets/asleep.svg</normaloff>:/assets/asleep.svg</iconset>
+    </property>
+    <property name="text">
+     <string>Reset</string>
+    </property>
+   </action>
+  </actiongroup>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

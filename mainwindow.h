@@ -7,6 +7,10 @@
 #include <QDateTime>
 #include <QSystemTrayIcon>
 #include <QCloseEvent>
+#include <QSignalMapper>
+#include "storage.h"
+#include <QNetworkRequest>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,6 +28,7 @@ public:
     void titleBarActions();
     void stringBuilder(quint32, std::string, QLabel*);
     QString preprocessTimer(quint32);
+    void updateUi();
     ~MainWindow();
 
 protected:
@@ -42,6 +47,11 @@ public slots:
     void createActions();
     void onMinimizeToSysTray();
     void onMsgClick();
+    void onFaIdleOnly();
+    void onFaInit();
+    void onCheckUpdate();
+    void onRedirectUpdate();
+    void onAutoboot();
 
 private:
     Ui::MainWindow *ui;
@@ -61,6 +71,9 @@ private:
     QAction *sfnAct;
     QAction *scAct;
     QAction *htuAct;
+    QAction *cfuAct;
     QCloseEvent *event;
+    Storage *s;
+    QString latestVer;
 };
 #endif // MAINWINDOW_H
