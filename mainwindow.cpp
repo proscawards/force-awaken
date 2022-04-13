@@ -51,8 +51,8 @@ MainWindow::MainWindow(QWidget *parent)
     mouseIdleSeconds = 0;
     lastIdleSec = 0;
     initSec = 0;
-    isForcedAwake = false;
-    isNormal = true;
+    isForcedAwake = true;
+    isNormal = false;
     isEscape = false;
     latestVer = ui->versionLabel->text();
     elapsedTimer = new QTimer();
@@ -89,9 +89,9 @@ MainWindow::MainWindow(QWidget *parent)
     tray->activated(QSystemTrayIcon::DoubleClick);
     connect(tray,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(trayOnTrigger(QSystemTrayIcon::ActivationReason)));
 
-    updateUi();
     titleBarActions();
     sfnOnSwitch();
+    updateUi();
 }
 
 //Setting up actions for system tray menu
@@ -363,7 +363,7 @@ void MainWindow::onMsgClick(){
 //Add app to local system path for auto boot
 void MainWindow::onAutoboot(){
     QSettings bootUpSettings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
-    QString app_path = QCoreApplication::applicationFilePath();
+    QString app_path = QCoreApplication::applicationFilePath().replace('/', '\\') + " --autostart";
     if (s->getFaOnInit()) {
         bootUpSettings.setValue("ForceAwaken", app_path);
     } else {
