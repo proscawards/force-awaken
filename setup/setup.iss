@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Force Awaken"
-#define MyAppVersion "1.0.5"
+#define MyAppVersion "1.0.6"
 #define MyAppPublisher "proscawards"
 #define MyAppURL "https://github.com/proscawards/force-awaken"
 #define MyAppExeName "Force_Awaken.exe"

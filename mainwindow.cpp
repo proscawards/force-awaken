@@ -41,10 +41,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->resetBtn->setShortcut(Qt::CTRL|Qt::Key_R);
     connect(ui->resetBtn, &QPushButton::released, this, &MainWindow::onAsleep);
 
-    //Disable reset button onInit
-    ui->resetBtn->setEnabled(false);
-    ui->currentStatusLbl->setText("System is now in DEFAULT state :D!");
-
     //Init
     mouseTimer = new QTimer();
     mouseLastPos = QCursor::pos();
@@ -92,6 +88,9 @@ MainWindow::MainWindow(QWidget *parent)
     titleBarActions();
     sfnOnSwitch();
     updateUi();
+
+    //Force awake onInit
+    onAwake();
 }
 
 //Setting up actions for system tray menu

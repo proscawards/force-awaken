@@ -272,7 +272,7 @@
           </font>
          </property>
          <property name="text">
-          <string>1.0.4</string>
+          <string>1.0.6</string>
          </property>
         </widget>
        </item>
@@ -474,20 +474,20 @@
    </property>
   </action>
   <action name="actionFaOnInit">
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-    <property name="icon">
-     <iconset resource="resources/resources.qrc">
-      <normaloff>:/assets/rocket.svg</normaloff>:/assets/rocket.svg</iconset>
-    </property>
-    <property name="text">
-     <string>Force Awake on Startup</string>
-    </property>
-    <property name="toolTip">
-     <string>Force Awake on Startup</string>
-    </property>
-   </action>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/assets/rocket.svg</normaloff>:/assets/rocket.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Force Awake on Startup</string>
+   </property>
+   <property name="toolTip">
+    <string>Force Awake on Startup</string>
+   </property>
+  </action>
   <action name="actionCheck_for_Update">
    <property name="icon">
     <iconset resource="resources/resources.qrc">
