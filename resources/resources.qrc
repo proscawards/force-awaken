@@ -12,5 +12,6 @@
 	<file>assets/asleep.svg</file>
 	<file>assets/rocket.svg</file>
 	<file>assets/onidle.svg</file>
+	<file>assets/background.svg</file>
   </qresource>
 </RCC>

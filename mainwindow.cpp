@@ -15,6 +15,11 @@
 #include <QJsonDocument>
 #include <QtDebug>
 #include <QSettings>
+#include <QFileDialog>
+#include <QProcess>
+#include <cstdlib>
+#include <stdio.h>
+#include <stdlib.h>
 
 #ifndef QT_NO_EMIT
 # define emit
@@ -81,6 +86,7 @@ MainWindow::MainWindow(QWidget *parent)
     tray = new QSystemTrayIcon();
     tray->setIcon(QIcon(":assets/logo.png"));
     tray->setContextMenu(menu);
+    tray->setToolTip("Force Awaken");
     tray->show();
     tray->activated(QSystemTrayIcon::DoubleClick);
     connect(tray,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(trayOnTrigger(QSystemTrayIcon::ActivationReason)));
@@ -187,15 +193,9 @@ void MainWindow::onCheckUpdate(){
         tray->showMessage("Force Awaken","Your version is up to date :D!",QIcon(":assets/logo.png"), 3000);
     }
     else{
-        tray->showMessage("Force Awaken","Your version is outdated! Click here to redirect to download page now!\nLatest Version: "+latestVer+"\nInstalled Version: "+version,QIcon(":assets/logo.png"), 3000);
-        connect(tray, SIGNAL(messageClicked()), this, SLOT(onRedirectUpdate()));
+        tray->showMessage("Force Awaken","Your version is outdated! Click here to install latest update!\nLatest Version: "+latestVer+"\nInstalled Version: "+version,QIcon(":assets/logo.png"), 3000);
+        connect(tray, SIGNAL(messageClicked()), this, SLOT(onExecShell()));
     }
-}
-
-//Redirect user to the release page of GitHub
-void MainWindow::onRedirectUpdate(){
-    QString link = "https://github.com/proscawards/force-awaken/releases/tag/v"+latestVer;
-    QDesktopServices::openUrl(QUrl(link));
 }
 
 //Show/Hide system tray (notification) on clicked
@@ -290,6 +290,8 @@ void MainWindow::titleBarActions(){
     connect(ui->actionfaIdle, SIGNAL(triggered()), this, SLOT(onFaIdleOnly()));
     ui->actionFaOnInit->setShortcut(Qt::Key_F3);
     connect(ui->actionFaOnInit, SIGNAL(triggered()), this, SLOT(onFaInit()));
+    ui->actionFaOnHidden->setShortcut(Qt::Key_F4);
+    connect(ui->actionFaOnHidden, SIGNAL(triggered()), this, SLOT(onFaHidden()));
     ui->actionCheck_for_Update->setShortcut(Qt::CTRL|Qt::Key_U);
     connect(ui->actionCheck_for_Update, SIGNAL(triggered()), this, SLOT(onCheckUpdate()));
 }
@@ -300,10 +302,21 @@ void MainWindow::onFaIdleOnly(){
     updateUi();
 }
 
-//Enable Force Awake on startup
+//Enable Force Awake on startup (visible)
 void MainWindow::onFaInit(){
+    ui->actionFaOnHidden->setChecked(false);
     s->setFaOnInit(ui->actionFaOnInit->isChecked());
-    onAutoboot();
+    s->setFaOnHidden(false);
+    onAutoboot(ui->actionFaOnInit->isChecked());
+    updateUi();
+}
+
+//Enable Force Awake on startup (hidden)
+void MainWindow::onFaHidden(){
+    ui->actionFaOnInit->setChecked(false);
+    s->setFaOnHidden(ui->actionFaOnHidden->isChecked());
+    s->setFaOnInit(false);
+    onAutoboot(ui->actionFaOnHidden->isChecked());
     updateUi();
 }
 
@@ -318,7 +331,7 @@ void MainWindow::onOpenInfo(){
     msgBox.setWindowTitle("How to use Force Awaken");
     msgBox.setWindowIcon(QIcon(":assets/logo.png"));
     msgBox.setText("Step(s):");
-    msgBox.setInformativeText("1. Click on Force Awake (CTRL + F).<br/> 2. Force Awake is now enabled, to disable it, click on Reset (CTRL + R).<br/> 3. Reset is now enabled, to disable it, repeat from Step 1.");
+    msgBox.setInformativeText("1. Force Awake is enabled by default, to disable it, click on Reset (R).<br/> 2. System is now reset into default state, to enable Force Awake, click on Force Awake (F).<br/> 3. Force Awake is now enabled, to disable it, repeat from Step 1.");
     msgBox.exec();
 }
 
@@ -360,14 +373,22 @@ void MainWindow::onMsgClick(){
 }
 
 //Add app to local system path for auto boot
-void MainWindow::onAutoboot(){
+void MainWindow::onAutoboot(bool hasFlag=false){
     QSettings bootUpSettings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
-    QString app_path = QCoreApplication::applicationFilePath().replace('/', '\\') + " --autostart";
-    if (s->getFaOnInit()) {
-        bootUpSettings.setValue("ForceAwaken", app_path);
-    } else {
-        bootUpSettings.remove("ForceAwaken");
+    QString app_path = QCoreApplication::applicationFilePath().replace('/', '\\');
+    if (hasFlag){
+        if (s->getFaOnInit()) {bootUpSettings.setValue("ForceAwaken", app_path + " --autostart");}
+        if (s->getFaOnHidden()){bootUpSettings.setValue("ForceAwaken", app_path + " --silent");}
     }
+    else {bootUpSettings.remove("ForceAwaken");}
+}
+
+//Execute shell script to update files
+void MainWindow::onExecShell(){
+    QDir dir(".");
+    QString update = dir.absolutePath() + "/update.bat";
+    QDesktopServices::openUrl(QUrl("file:///"+update, QUrl::TolerantMode));
+    tray->showMessage("Updating Force Awaken","Please be patience, app will attempt to restart in a few seconds.",QIcon(":assets/logo.png"), 3000);
 }
 
 //Preprocess seconds to dd:HH:mm:ss format
@@ -390,7 +411,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (tray->isVisible()) {
         if (!isEscape){
-            tray->showMessage("Force Awaken","Force Awaken is now running in background!",QIcon(":assets/logo.png"), 3000);
+            tray->showMessage("Force Awaken","Force Awaken is now running in background!",QIcon(":assets/logo.png"), 1000);
             connect(tray, SIGNAL(messageClicked()), this, SLOT(onMsgClick()));
         }
         hide();
@@ -405,7 +426,8 @@ void MainWindow::updateUi(){
     ui->actionReset->setChecked(isNormal);
     ui->actionfaIdle->setChecked(s->getIsIdleOnFaOnly());
     ui->actionFaOnInit->setChecked(s->getFaOnInit());
-    if (s->getFaOnInit()){onAwake();}
+    ui->actionFaOnHidden->setChecked(s->getFaOnHidden());
+    if (s->getFaOnInit() || s->getFaOnHidden()){onAwake();}
 }
 
 MainWindow::~MainWindow()

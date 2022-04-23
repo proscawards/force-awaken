@@ -272,7 +272,7 @@
           </font>
          </property>
          <property name="text">
-          <string>1.0.6</string>
+          <string>1.0.7</string>
          </property>
         </widget>
        </item>
@@ -310,7 +310,7 @@
       <x>10</x>
       <y>90</y>
       <width>281</width>
-      <height>41</height>
+      <height>31</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -375,21 +375,14 @@
    </property>
    <widget class="QMenu" name="menuExit">
     <property name="title">
-     <string>Main Menu</string>
+     <string>Action</string>
     </property>
     <addaction name="actionForce_Awake"/>
     <addaction name="actionReset"/>
     <addaction name="separator"/>
     <addaction name="actionStats_for_Nerd"/>
     <addaction name="separator"/>
-    <addaction name="actionHow_to_use"/>
-    <addaction name="actionSource_Codes"/>
     <addaction name="actionCheck_for_Update"/>
-    <addaction name="separator"/>
-    <addaction name="actionExit_to_system_tray"/>
-    <addaction name="actionExit_Application"/>
-    <addaction name="separator"/>
-    <addaction name="action_Copyright_2022_proscawards_All_rights_reserved_Made_with_and"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -398,9 +391,28 @@
     <addaction name="actionfaIdle"/>
     <addaction name="separator"/>
     <addaction name="actionFaOnInit"/>
+    <addaction name="actionFaOnHidden"/>
+   </widget>
+   <widget class="QMenu" name="menuExit_2">
+    <property name="title">
+     <string>Exit</string>
+    </property>
+    <addaction name="actionExit_to_system_tray"/>
+    <addaction name="actionExit_Application"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>Info</string>
+    </property>
+    <addaction name="actionHow_to_use"/>
+    <addaction name="actionSource_Codes"/>
+    <addaction name="separator"/>
+    <addaction name="action_Copyright_2022_proscawards_All_rights_reserved_Made_with_and"/>
    </widget>
    <addaction name="menuExit"/>
+   <addaction name="menuAbout"/>
    <addaction name="menuSettings"/>
+   <addaction name="menuExit_2"/>
   </widget>
   <action name="action_Copyright_2022_proscawards_All_rights_reserved_Made_with_and">
    <property name="enabled">
@@ -482,7 +494,7 @@
      <normaloff>:/assets/rocket.svg</normaloff>:/assets/rocket.svg</iconset>
    </property>
    <property name="text">
-    <string>Force Awake on Startup</string>
+    <string>Force Awake on Startup (Visible)</string>
    </property>
    <property name="toolTip">
     <string>Force Awake on Startup</string>
@@ -495,6 +507,18 @@
    </property>
    <property name="text">
     <string>Check for Update</string>
+   </property>
+  </action>
+  <action name="actionFaOnHidden">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/assets/background.svg</normaloff>:/assets/background.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Force Awake on Startup (Background)</string>
    </property>
   </action>
   <actiongroup name="menuMainFunc">

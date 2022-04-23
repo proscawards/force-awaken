@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Force Awaken"
-#define MyAppVersion "1.0.6"
+#define MyAppVersion "1.0.7"
 #define MyAppPublisher "proscawards"
 #define MyAppURL "https://github.com/proscawards/force-awaken"
 #define MyAppExeName "Force_Awaken.exe"
@@ -43,6 +43,7 @@ Source: "D:\GitHub\force-awaken\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit
 Source: "D:\GitHub\force-awaken\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\styles\*"; DestDir: "{app}\plugins/styles"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\GitHub\force-awaken\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\tls\*"; DestDir: "{app}\plugins/tls"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\GitHub\force-awaken\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\translations\*"; DestDir: "{app}\plugins/translations"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "D:\GitHub\force-awaken\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\settings\*"; DestDir: "{app}\settings"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\D3Dcompiler_47.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\libgcc_s_seh-1.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -66,6 +67,7 @@ Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\Qt6
 Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\Qt6Quick.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\Qt6Svg.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\build-force-awaken-Desktop_Qt_6_2_3_MinGW_64_bit-Release\release\Qt6Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\GitHub\force-awaken\update.bat"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

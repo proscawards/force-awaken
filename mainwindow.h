@@ -11,7 +11,6 @@
 #include "storage.h"
 #include <QNetworkRequest>
 
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -49,9 +48,10 @@ public slots:
     void onMsgClick();
     void onFaIdleOnly();
     void onFaInit();
+    void onFaHidden();
     void onCheckUpdate();
-    void onRedirectUpdate();
-    void onAutoboot();
+    void onAutoboot(bool);
+    void onExecShell();
 
 private:
     Ui::MainWindow *ui;

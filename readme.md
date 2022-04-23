@@ -1,11 +1,11 @@
 # ☕ Force Awaken
 Prevent system (Windows) from going into sleep/lock mode.
 
-<a href="https://github.com/proscawards/force-awaken/releases/download/v1.0.6/Force-Awaken-1.0.6.Setup.exe">
+<a href="https://github.com/proscawards/force-awaken/releases/latest/download/Force-Awaken.Setup.exe">
   <img src="https://img.shields.io/badge/Download_(installer)-30899B?style=for-the-badge&logo=&logoColor=white" />        
 </a>
 
-<a href="https://github.com/proscawards/force-awaken/releases/download/v1.0.6/Force-Awaken-1.0.6.Setup.zip">
+<a href="https://github.com/proscawards/force-awaken/releases/latest/download/Force-Awaken.Setup.zip">
   <img src="https://img.shields.io/badge/Download_(zip)-39A575?style=for-the-badge&logo=&logoColor=white" />        
 </a>
 

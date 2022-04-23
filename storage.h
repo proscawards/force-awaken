@@ -11,13 +11,17 @@ public:
     void saveJsonFile();
     void readJsonFile();
     void setFaOnInit(bool);
+    void setFaOnHidden(bool);
     void setIsIdleOnFaOnly(bool);
     bool getFaOnInit();
+    bool getFaOnHidden();
     bool getIsIdleOnFaOnly();
     ~Storage();
 private:
     QString fileName;
+    QString filePath;
     bool faOnInit;
+    bool faOnHidden;
     bool isIdleOnFaOnly;
 };
 
